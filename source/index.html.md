@@ -25,15 +25,6 @@ The analytics API allows you to
 
 - [Get](#get-a-list-of-credentials), [add](#create-a-new-set-of-credentials), [update](#update-a-set-of-credentials), [promote](#promote-a-set-of-credentials), and/or [delete](#delete-a-set-of-credentials) a set of credentials connected to your cache.
 
-
-
-
-
-
-
-
-
-
 # Authentication
 
 > To authorize, use this code:
@@ -48,12 +39,6 @@ curl "https://analytics.memcachier.com/api/v1/:memcachier_id/:action"
 Memcachier uses credentials to allow access to the API. After you've created a cache, you can find your credentials on the [analytics dashboard](https://analytics.memcachier.com/). Only credentials that have the API capability will be allowed to use this API.
 
 Memcachier expects for your credentials to be included in the header of all API requests.
-
-
-
-
-
-
 
 # Memcachier ID
 
@@ -88,14 +73,6 @@ Status| Response
 <aside class="notice">
 This is not the same thing as the "Memcachier ID" listed on your analytics dashboard.
 </aside>
-
-
-
-
-
-
-
-
 
 # Stats
 
@@ -160,15 +137,6 @@ Status| Response
 200   | JSON response with stats
 403   | "You are not authorized to perform this action."
 500   | "Server error: a.b.c.totallyaserver.com:1234,..."
-
-
-
-
-
-
-
-
-
 
 # History
 
@@ -237,19 +205,6 @@ Status| Response
 403   | "You are not authorized to perform this action."
 500   | "Server error"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Flush
 
 ## Flush All the Data from the Cache
@@ -278,37 +233,9 @@ Status| Response
 403   | "You are not authorized to perform this action."
 500   | "Server error: a.b.c.totallyaserver.com:1234,..."
 
-
-
-
-
-
-
-
-
-
-
 # Credentials
 
-In order to connect a memcache client to MemCachier, you use a credential username and password listed on the [analytics dashboard](https://analytics.memcachier.com) for your cache, or accessed through this API. Each cache can have multiple sets of credentials. One of these sets of credentials is distinguished as primary, meaning that, for hosted platforms like Heroku, it is linked to the hosted platform MemCachier addon.
-
-## How to use the credentials endpoints
-
-Through the API (like the analytics dashboard), it is possible to create new credentials, delete existing credentials and promote secondary credentials to primary credentials. This makes it possible to rotate credentials by creating a new set of secondary credentials and promoting them to primary. For caches associated with hosted platforms, promoting a set of secondary credentials to primary causes the configuration variables on the hosted platform to be updated. For example, rotating the credentials on a Heroku-associated cache causes an update of the `MEMCACHIER_USERNAME` and `MEMCACHIER_PASSWORD` configuration variables on your Heroku app and a restart of your dynos to pick up the new values.
-
-## Credential Capabilities
-
-Each set of credentials for a cache can be given different capabilities, in the sense that sets of credentials can be restricted to read-only access to the cache, prevented from flushing the cache via the memcache API, or prevented from using the analytics API. These capabilities are controlled by checkboxes on the Credentials panel of the analytics dashboard. (The exact error conditions that a client will receive if it attempts to perform an action for which it does not have the capability depends on the details of the client library used. The most common cases are likely to be for the Dalli Ruby library and the pylibmc Python library. For both of these client libraries, attempting to set a cache entry using credentials that do not have the write capability will simply result in a "value not set" response from the library.)
-
-
-
-
-
-
-
-
-
-
+You can read more about what credentials are and how to use them in our [platform documentation](https://www.memcachier.com/documentation#credentials).
 
 ## Get A List of Credentials
 
@@ -359,14 +286,6 @@ Status| Response
 403   | "You are not authorized to perform this action."
 500   | "Server error"
 
-
-
-
-
-
-
-
-
 ## Create a New Set of Credentials
 
 ```shell
@@ -403,16 +322,6 @@ Status| Response
 200   | JSON of new credential properties
 403   | "You are not authorized to perform this action."
 500   | "Server error"
-
-
-
-
-
-
-
-
-
-
 
 ## Update a Set of Credentials
 
@@ -454,13 +363,6 @@ Status| Response
 403   | "You are not authorized to perform this action."
 500   | "Server error"
 
-
-
-
-
-
-
-
 ## Promote a Set of Credentials
 
 ```shell
@@ -495,14 +397,6 @@ Status| Response
 200   | JSON of new credential properties
 403   | "You are not authorized to perform this action."
 500   | "Server error"
-
-
-
-
-
-
-
-
 
 ## Delete a Set of Credentials
 
