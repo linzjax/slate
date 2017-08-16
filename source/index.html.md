@@ -3,237 +3,525 @@ title: API Reference
 
 language_tabs: # must be one of https://git.io/vQNgJ
   - shell
-  - ruby
-  - python
-  - javascript
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
+  - <a href='https://www.memcachier.com'>Sign Up for a Memcachier Account</a>
   - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
-
-includes:
-  - errors
 
 search: true
 ---
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+The purpose of this API is to give you access to some of the features available on the Memcachier Analytics Dashboard. Our analytics dashboard is a simple tool that gives you more insight into how you’re using memcache.
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+To access your application's analytics dashboard login to your account and view one of your caches.
 
-This example API documentation page was created with [Slate](https://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
+The analytics API allows you to
+
+- [Flush](#flush) your cache.
+
+- Collect [current](#stats) as well as [historical](#history) statistical information about your cache usage.
+
+- [Get](#get-a-list-of-credentials), [add](#create-a-new-set-of-credentials), [update](#update-a-set-of-credentials), [promote](#promote-a-set-of-credentials), and/or [delete](#delete-a-set-of-credentials) a set of credentials connected to your cache.
+
+
+
+
+
+
+
+
+
 
 # Authentication
 
 > To authorize, use this code:
 
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
+```shell
+curl "https://analytics.memcachier.com/api/v1/:memcachier_id/:action"
+  --user CRED_USERNAME:CRED_PASSWORD
 ```
 
-```python
-import kittn
+> Make sure to replace `CRED_USERNAME:CRED_PASSWORD` with your credential username and password found on the analytics dashboard.
 
-api = kittn.authorize('meowmeowmeow')
-```
+Memcachier uses credentials to allow access to the API. After you've created a cache, you can find your credentials on the [analytics dashboard](https://analytics.memcachier.com/). Only credentials that have the API capability will be allowed to use this API.
+
+Memcachier expects for your credentials to be included in the header of all API requests.
+
+
+
+
+
+
+
+# Memcachier ID
 
 ```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
+curl "https://analytics.memcachier.com/api/v1/login"
+  --user CRED_USERNAME:CRED_PASSWORD
 ```
 
-```javascript
-const kittn = require('kittn');
+> The above command will return your memcachier ID:
 
-let api = kittn.authorize('meowmeowmeow');
+```json
+{
+    "cache_id": 15
+}
 ```
 
-> Make sure to replace `meowmeowmeow` with your API key.
+All of the API paths include a `<memcachier_id>` variable. In order to find this number, you'll need to use the /login path.
 
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
+### HTTP Request
 
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
+`GET https://analytics.memcachier.com/api/login`
 
-`Authorization: meowmeowmeow`
+### Responses
+
+Status| Response
+------|-----------
+200   | JSON response with memcachier id
+403   | "You are not authorized to perform this action."
+404   | "No cache found."
+500   | "Server error"
 
 <aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+This is not the same thing as the "Memcachier ID" listed on your analytics dashboard.
 </aside>
 
-# Kittens
 
-## Get All Kittens
 
-```ruby
-require 'kittn'
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
 
-```python
-import kittn
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
+
+
+
+# Stats
+
+## Get All Statistics for a Cache
 
 ```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
+curl "https://analytics.memcachier.com/api/v1/<memcachier_id>/stats"
+  --user "CRED_USERNAME:CRED_PASSWORD"
 ```
 
 > The above command returns JSON structured like this:
 
 ```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
-]
+{
+    "a.b.c.totallyaserver.com:12345": {
+        "auth_cmds": 19,
+        "auth_errors": 0,
+        "bytes": 0,
+        "bytes_read": 960,
+        "bytes_written": 22233,
+        "cas_badval": 0,
+        "cas_hits": 0,
+        "cas_misses": 0,
+        "cmd_delete": 0,
+        "cmd_flush": 0,
+        "cmd_get": 0,
+        "cmd_set": 0,
+        "cmd_touch": 0,
+        "curr_connections": 0,
+        "curr_items": 0,
+        "decr_hits": 0,
+        "decr_misses": 0,
+        "delete_hits": 0,
+        "delete_misses": 0,
+        "evictions": 0,
+        "expired": 0,
+        "get_hits": 0,
+        "get_misses": 0,
+        "incr_hits": 0,
+        "incr_misses": 0,
+        "limit_maxbytes": 28835840,
+        "time": 1500651085,
+        "total_connections": 19,
+        "total_items": 0,
+        "touch_hits": 0,
+        "touch_misses": 0
+    }
+}
 ```
 
-This endpoint retrieves all kittens.
+This endpoint retrieves all the statistics for your cache.
 
 ### HTTP Request
 
-`GET http://example.com/api/kittens`
+`GET https://analytics.memcachier.com/api/v1/<memcachier_id>/stats`
+
+
+### Responses
+
+Status| Response
+------|-----------
+200   | JSON response with stats
+403   | "You are not authorized to perform this action."
+500   | "Server error: a.b.c.totallyaserver.com:1234,..."
+
+
+
+
+
+
+
+
+
+
+# History
+
+## Get All Statistical History for a Cache
+
+```shell
+curl "https://analytics.memcachier.com/api/v1/<memcachier_id>/history"
+  --user "CRED_USERNAME:CRED_PASSWORD"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+  [{
+    "memcachier_id": "11",
+    "server": "a.b.c.totallyaserver.memcachier.com",
+    "stats": {
+        "auth_cmds": 158,
+        "auth_errors": 0,
+        "bytes": 0,
+        "bytes_read": 3840,
+        "bytes_written": 178754,
+        "cas_badval": 0,
+        "cas_hits": 0,
+        "cas_misses": 0,
+        "cmd_delete": 0,
+        "cmd_flush": 0,
+        "cmd_get": 0,
+        "cmd_set": 0,
+        "cmd_touch": 0,
+        "curr_connections": 2,
+        "curr_items": 0,
+        "decr_hits": 0,
+        "decr_misses": 0,
+        "delete_hits": 0,
+        "delete_misses": 0,
+        "evictions": 0,
+        "expired": 0,
+        "get_hits": 0,
+        "get_misses": 0,
+        "incr_hits": 0,
+        "incr_misses": 0,
+        "limit_maxbytes": 1153433600,
+        "time": 1490731542,
+        "total_connections": 158,
+        "total_items": 0,
+        "touch_hits": 0,
+        "touch_misses": 0
+    },
+    "timestamp": "1490731541096"
+    }, … ]
+
+```
+
+This endpoint retrieves the statistical history of a cache.
+
+### HTTP Request
+
+`GET https://analytics.memcachier.com/api/v1/<memcachier_id>/history`
+
+### Responses
+
+Status| Response
+------|-----------
+200   | JSON response with stats
+403   | "You are not authorized to perform this action."
+500   | "Server error"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Flush
+
+## Flush All the Data from the Cache
+
+```shell
+curl "https://analytics.memcachier.com/api/v1/<memcachier_id>/flush" -X POST
+  --user "CRED_USERNAME:CRED_PASSWORD"
+```
+
+> The above command will return a 200 success message of successful.
+
+
+This endpoint will flush all of the data from the cache cache.
+
+<aside class='notice'>Certain credentials may not have permission to flush the cache, which will produce a 403 error.</aside>
+
+### HTTP Request
+
+`POST https://analytics.memcachier.com/api/v1/<memcachier_id>/flush`
+
+### Responses
+
+Status| Response
+------|-----------
+200   | ""
+403   | "You are not authorized to perform this action."
+500   | "Server error: a.b.c.totallyaserver.com:1234,..."
+
+
+
+
+
+
+
+
+
+
+
+# Credentials
+
+In order to connect a memcache client to MemCachier, you use a credential username and password listed on the [analytics dashboard](https://analytics.memcachier.com) for your cache, or accessed through this API. Each cache can have multiple sets of credentials. One of these sets of credentials is distinguished as primary, meaning that, for hosted platforms like Heroku, it is linked to the hosted platform MemCachier addon.
+
+## How to use the credentials endpoints
+
+Through the API (like the analytics dashboard), it is possible to create new credentials, delete existing credentials and promote secondary credentials to primary credentials. This makes it possible to rotate credentials by creating a new set of secondary credentials and promoting them to primary. For caches associated with hosted platforms, promoting a set of secondary credentials to primary causes the configuration variables on the hosted platform to be updated. For example, rotating the credentials on a Heroku-associated cache causes an update of the `MEMCACHIER_USERNAME` and `MEMCACHIER_PASSWORD` configuration variables on your Heroku app and a restart of your dynos to pick up the new values.
+
+## Credential Capabilities
+
+Each set of credentials for a cache can be given different capabilities, in the sense that sets of credentials can be restricted to read-only access to the cache, prevented from flushing the cache via the memcache API, or prevented from using the analytics API. These capabilities are controlled by checkboxes on the Credentials panel of the analytics dashboard. (The exact error conditions that a client will receive if it attempts to perform an action for which it does not have the capability depends on the details of the client library used. The most common cases are likely to be for the Dalli Ruby library and the pylibmc Python library. For both of these client libraries, attempting to set a cache entry using credentials that do not have the write capability will simply result in a "value not set" response from the library.)
+
+
+
+
+
+
+
+
+
+
+
+## Get A List of Credentials
+
+```shell
+curl "https://analytics.memcachier.com/api/v1/<memcachier_id>/credentials"
+  --user "CRED_USERNAME:CRED_PASSWORD"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+  [
+    {
+        "cache_id": 14,
+        "flush_capability": false,
+        "id": 44,
+        "sasl_username": "123456",
+        "uuid": null,
+        "write_capability": true,
+        "api_capability": true,
+        "primary": true,
+    },
+    {
+        "cache_id": 14,
+        "flush_capability": false,
+        "id": 43,
+        "sasl_username": "789101",
+        "uuid": null,
+        "write_capability": true,
+        "api_capability": true,
+        "primary": false,
+    }, ...
+]
+
+```
+
+The endpoint returns a list of all the credentials connected to the cache.
+
+### HTTP Request
+
+`GET https://analytics.memcachier.com/api/v1/<memcachier_id>/credentials`
+
+### Responses
+
+Status| Response
+------|-----------
+200   | JSON list of credentials
+403   | "You are not authorized to perform this action."
+500   | "Server error"
+
+
+
+
+
+
+
+
+
+## Create a New Set of Credentials
+
+```shell
+curl "https://analytics.memcachier.com/api/v1/<memcachier_id>/credentials" -X POST
+  --user "CRED_USERNAME:CRED_PASSWORD"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "cache_id": 14,
+    "id": null,
+    "sasl_password": "EE39F0F3D0C11330451F0B148BC7C24E",
+    "sasl_username": "51B791",
+    "uuid": null,
+    "primary": false,
+    "flush_capability": true,
+    "write_capability": true,
+    "api_capability": true,
+}
+
+```
+This endpoint creates a new set of credentials which can be used to connect to the cache.
+
+### HTTP Request
+
+`POST https://analytics.memcachier.com/api/v1/<memcachier_id>/credentials`
+
+### Responses
+
+Status| Response
+------|-----------
+200   | JSON of new credential properties
+403   | "You are not authorized to perform this action."
+500   | "Server error"
+
+
+
+
+
+
+
+
+
+
+
+## Update a Set of Credentials
+
+```shell
+curl "https://analytics.memcachier.com/api/v1/<memcachier_id>/credentials/<cred_username>" -X PATCH
+  -d '{"flush_capability":"false"}'
+  --user "CRED_USERNAME:CRED_PASSWORD"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+    "flush_capability": false,
+    "write_capability": true,
+    "api_capability": true,
+}
+
+```
+This endpoint updates the capabilities of a specific set of credentials.
+
+### HTTP Request
+
+`POST https://analytics.memcachier.com/api/v1/<memcachier_id>/credentials/<cred_id>`
 
 ### Query Parameters
 
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
+Parameter        | Default | Description
+-----------------|---------|-------------
+flush_capability | true    | Authorize this set of credentials to flush the cache.
+write_capability | true    | Authorize this set of credentials to write to the cache.
+api_capability   | true    | Authorize this set of credentials to use this API.
 
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
+### Responses
 
-## Get a Specific Kitten
+Status| Response
+------|-----------
+200   | JSON of new credential properties
+403   | "You are not authorized to perform this action."
+500   | "Server error"
 
-```ruby
-require 'kittn'
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
 
-```python
-import kittn
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
+
+
+
+
+## Promote a Set of Credentials
 
 ```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
+curl "https://analytics.memcachier.com/api/v1/<memcachier_id>/credentials/primary/<cred_username>" -X POST
+  --user "CRED_USERNAME:CRED_PASSWORD"
 ```
 
 > The above command returns JSON structured like this:
 
 ```json
 {
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
+    "cache_id": 14,
+    "id": null,
+    "sasl_username": "51B791",
+    "uuid": null,
+    "primary": true,
+    "flush_capability": false,
+    "write_capability": true,
+    "api_capability": true,
 }
+
 ```
-
-This endpoint retrieves a specific kitten.
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
 
 ### HTTP Request
 
-`GET http://example.com/kittens/<ID>`
+`POST https://analytics.memcachier.com/api/v1/<memcachier_id>/credentials/primary/<cred_id>`
 
-### URL Parameters
+### Responses
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
+Status| Response
+------|-----------
+200   | JSON of new credential properties
+403   | "You are not authorized to perform this action."
+500   | "Server error"
 
-## Delete a Specific Kitten
 
-```ruby
-require 'kittn'
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
 
-```python
-import kittn
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
+
+
+
+
+## Delete a Set of Credentials
 
 ```shell
-curl "http://example.com/api/kittens/2"
-  -X DELETE
-  -H "Authorization: meowmeowmeow"
+curl "https://analytics.memcachier.com/api/v1/<memcachier_id>/credentials/primary/<cred_username>" -X DELETE
+  --user "CRED_USERNAME:CRED_PASSWORD"
 ```
 
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "deleted" : ":("
-}
-```
-
-This endpoint retrieves a specific kitten.
+> The above command returns a 200 status code if successful.
 
 ### HTTP Request
 
-`DELETE http://example.com/kittens/<ID>`
+`POST https://analytics.memcachier.com/api/v1/<memcachier_id>/credentials/primary/<cred_id>`
 
-### URL Parameters
+### Responses
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
+Status| Response
+------|-----------
+200   | ""
+403   | "You are not authorized to perform this action."
+500   | "Server error"
 
